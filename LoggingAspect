@@ -1,0 +1,70 @@
+package testandoPOA;
+
+public aspect LoggingAspect {
+	// Intercepta qualquer execução do método performTask()
+	pointcut taskExecution(): execution(*SampleService.performTask(..));
+
+	// Advice que é executado antes de performTask
+	before(): taskExecution() {
+	System.out.println("[Before] Task is about to be executed.");
+	}
+
+	// Advice que é executado após performTask, independente de sucesso ou falha
+
+	after(): taskExecution() {
+	System.out.println("[After] Task has been executed.");
+
+	}
+	// Intercepta a execução de qualquer método que retorne uma String
+
+	pointcut stringReturningMethods(): execution(String SampleService.getMessage());
+
+	// Advice que é executado após o retorno bem-sucedido de um método 
+	
+	void afterReturning(String result): stringReturningMethods() {
+	System.out.println("[After Returning] Method returned: " +
+	result);
+
+	}
+
+	// Advice que é executado após uma exceção ser lançada 
+	void afterThrowing1(Exception ex): execution(*SampleService.riskyOperation(..))
+	{
+	System.out.println("[After Throwing] Exception caught: " + ex.getMessage());
+
+	}
+
+	// Advice que envolve a execução do método
+	Object aroundTaskExecution(ProceedingJoinPoint joinPoint) throws Throwable {
+	System.out.println("[Around] Before task execution.");
+	Object result = joinPoint.proceed(); // Continua a execução do método original
+	System.out.println("[Around] After task execution.");
+	return result;
+	}
+	
+	before(): taskExecution() {
+		System.out.println("[Before] Task is about to be executed.");
+		}
+	
+	after(): taskExecution() {
+		System.out.println("[After] Task has been executed.");
+		}
+
+	
+	void afterReturning1(String result): stringReturningMethods() {
+		System.out.println("[After Returning] Method returned: " + result);
+		
+		
+}
+	
+	void afterThrowing(Exception ex);
+	execution(* SampleService.riskyOperation(..)) {
+			System.out.println("[After Throwing] Exception caught: " +
+			ex.getMessage());
+			}
+	
+	
+	
+}
+
+
